@@ -1,0 +1,17 @@
+name: RadiationPlus
+version: 0.5
+main: com.example.radiation.RadiationPlugin
+api-version: 1.21
+commands:
+  radzone:
+    description: Управление радиационными зонами
+    usage: /radzone <create|toggle|delete|list|status> [аргументы]
+    aliases: [rad]
+    permission: radiation.admin
+    permission-message: "§cТребуются права администратора!"
+  
+  test-r:
+    description: Тестовая команда
+    usage: /test-r
+    aliases: [tr]
+    permission: radiation.admin

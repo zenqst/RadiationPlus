@@ -1,0 +1,32 @@
+# Конфигурация плагина RadiationPlugin
+
+# Скорость накопления/спада радиации (за секунду)
+accumulationRate: 0.1
+decayRate: 0.2
+
+# Пороговые значения уровней радиации:
+level2Threshold: 6.0
+level3Threshold: 9.0
+level4Threshold: 15.0
+level5Threshold: 25.0
+
+# Базовый урон, который наносится на уровне 4 (на уровне 5 урон удваивается)
+baseDamage: 1.0
+
+# Настройки датчика радиации
+radiation-sensor:
+  hide-recipe: true
+  glow-effect: true # Контроль свечения
+  prevent-placement: true # Блокировка установки
+  recipe:
+    shape:
+      - "ORD"
+      - "RCR"
+      - "ARS"
+    ingredients:
+      R: REDSTONE
+      C: COMPASS
+      O: OBSERVER
+      D: DAYLIGHT_DETECTOR
+      A: COMPARATOR
+      S: SCULK_SENSOR
