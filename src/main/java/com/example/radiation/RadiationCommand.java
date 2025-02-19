@@ -8,7 +8,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.ChatColor;
+
+import java.io.File;
 import java.util.Map;
+import java.util.HashMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -25,17 +28,54 @@ public class RadiationCommand implements CommandExecutor {
         this.plugin = plugin;
     }
 
+    // Поля для локализации
+    private File langFile;
+    private FileConfiguration langConfig;
+
+    /**
+     * Загружает языковой файл из папки data/languages.
+     * Использует значение параметра "lang" из config.yml (по умолчанию "en_US").
+     */
+    private void loadLanguage() {
+        String lang = plugin.getConfig().getString("lang", "en_US");
+        langFile = new File(plugin.getDataFolder(), "languages" + File.separator + lang + ".yml");
+        if (!langFile.exists()) {
+            plugin.getDataFolder().mkdirs();
+            plugin.saveResource("languages/" + lang + ".yml", false);
+        }
+        langConfig = YamlConfiguration.loadConfiguration(langFile);
+    }
+
+    /**
+     * Возвращает сообщение из языкового файла по ключу с переводом цветовых кодов.
+     */
+    public String getLangMessage(String key) {
+        return ChatColor.translateAlternateColorCodes('&', langConfig.getString(key, key));
+    }
+
+    /**
+     * Возвращает сообщение с подстановкой плейсхолдеров.
+     */
+    public String getLangMessage(String key, Map<String, String> placeholders) {
+        String msg = ChatColor.translateAlternateColorCodes('&', langConfig.getString(key, key));
+        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+            msg = msg.replace("%" + entry.getKey() + "%", entry.getValue());
+        }
+        return msg;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         loadConfigValues();
+        loadLanguage();
 
         if (!sender.isOp()) {
-            sender.sendMessage(ChatColor.RED + "У вас нет прав для использования этой команды.");
+            sender.sendMessage(getLangMessage("no_permission"));
             return true;
         }
 
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.YELLOW + "Использование: /radzone <create|toggle|delete|list|status> [аргументы]");
+            sender.sendMessage(getLangMessage("command_usage"));
             return true;
         }
 
@@ -51,14 +91,14 @@ public class RadiationCommand implements CommandExecutor {
             case "status":
                 return handleStatus(sender);
             default:
-                sender.sendMessage(ChatColor.RED + "Неизвестная подкоманда.");
+                sender.sendMessage(getLangMessage("unknown_command"));
                 return true;
         }
     }
 
     private boolean handleCreate(CommandSender sender, String[] args) {
         if (args.length != 8) {
-            sender.sendMessage(ChatColor.RED + "Использование: /radzone create <название> <x1> <y1> <z1> <x2> <y2> <z2>");
+            sender.sendMessage(getLangMessage("command_usage"));
             return true;
         }
 
@@ -71,17 +111,20 @@ public class RadiationCommand implements CommandExecutor {
             double y2 = Double.parseDouble(args[6]);
             double z2 = Double.parseDouble(args[7]);
 
-            String worldName = sender instanceof Player ? 
-                ((Player) sender).getWorld().getName() : 
-                Bukkit.getWorlds().get(0).getName();
+            String worldName = sender instanceof Player ?
+                    ((Player) sender).getWorld().getName() :
+                    Bukkit.getWorlds().get(0).getName();
 
             RadiationZone zone = new RadiationZone(zoneName, worldName, x1, y1, z1, x2, y2, z2);
             plugin.getZones().put(zoneName, zone);
             plugin.saveZones();
 
-            sender.sendMessage(ChatColor.GREEN + "Зона '" + zoneName + "' создана в мире " + worldName + ".");
+            Map<String, String> placeholders = new HashMap<>();
+            placeholders.put("zone", zoneName);
+            placeholders.put("world", worldName);
+            sender.sendMessage(getLangMessage("zone_created", placeholders));
         } catch (NumberFormatException e) {
-            sender.sendMessage(ChatColor.RED + "Координаты должны быть числами.");
+            sender.sendMessage(getLangMessage("number_format_error"));
         }
         return true;
     }
@@ -96,22 +139,28 @@ public class RadiationCommand implements CommandExecutor {
     private boolean handleToggle(CommandSender sender) {
         boolean current = plugin.isRadiationActive();
         plugin.setRadiationActive(!current);
-        sender.sendMessage(ChatColor.GREEN + "Радиация " + (plugin.isRadiationActive() ? "активирована" : "деактивирована") + ".");
+        Map<String, String> placeholders = new HashMap<>();
+        placeholders.put("state", plugin.isRadiationActive() ? getLangMessage("radiation_enabled") : getLangMessage("radiation_disabled"));
+        sender.sendMessage(getLangMessage("radiation_toggle", placeholders));
         return true;
     }
 
     private boolean handleDelete(CommandSender sender, String[] args) {
         if (args.length != 2) {
-            sender.sendMessage(ChatColor.RED + "Использование: /radzone delete <название>");
+            sender.sendMessage(getLangMessage("delete_usage"));
             return true;
         }
 
         String zoneName = args[1];
         if (plugin.getZones().remove(zoneName) != null) {
             plugin.saveZones();
-            sender.sendMessage(ChatColor.GREEN + "Зона '" + zoneName + "' удалена.");
+            Map<String, String> placeholders = new HashMap<>();
+            placeholders.put("zone", zoneName);
+            sender.sendMessage(getLangMessage("zone_deleted", placeholders));
         } else {
-            sender.sendMessage(ChatColor.RED + "Зона с названием '" + zoneName + "' не найдена.");
+            Map<String, String> placeholders = new HashMap<>();
+            placeholders.put("zone", zoneName);
+            sender.sendMessage(getLangMessage("zone_not_found", placeholders));
         }
         return true;
     }
@@ -119,33 +168,40 @@ public class RadiationCommand implements CommandExecutor {
     private boolean handleList(CommandSender sender) {
         Map<String, RadiationZone> zones = plugin.getZones();
         if (zones.isEmpty()) {
-            sender.sendMessage(ChatColor.YELLOW + "Нет созданных радиационных зон.");
+            sender.sendMessage(getLangMessage("no_zones"));
             return true;
         }
 
-        sender.sendMessage(ChatColor.GOLD + "─── " + ChatColor.BOLD + "Список зон (" + zones.size() + ")" + ChatColor.RESET + ChatColor.GOLD + " ───");
+        Map<String, String> placeholders = new HashMap<>();
+        placeholders.put("count", String.valueOf(zones.size()));
+        sender.sendMessage(getLangMessage("zone_list_header", placeholders));
         zones.forEach((name, zone) -> {
-            sender.sendMessage(ChatColor.GREEN + "▸ " + ChatColor.BOLD + name + ChatColor.RESET
-                + ChatColor.GRAY + " [Мир: " + zone.getWorld() + "]"
-                + ChatColor.DARK_GRAY + " | " + ChatColor.YELLOW + "X: " + Math.round(zone.getX1()) + "..." + Math.round(zone.getX2())
-                + ChatColor.DARK_GRAY + " | " + ChatColor.YELLOW + "Y: " + Math.round(zone.getY1()) + "..." + Math.round(zone.getY2())
-                + ChatColor.DARK_GRAY + " | " + ChatColor.YELLOW + "Z: " + Math.round(zone.getZ1()) + "..." + Math.round(zone.getZ2()));
+            Map<String, String> ph = new HashMap<>();
+            ph.put("zone", name);
+            ph.put("world", zone.getWorld());
+            ph.put("x1", String.valueOf(Math.round(zone.getX1())));
+            ph.put("x2", String.valueOf(Math.round(zone.getX2())));
+            ph.put("y1", String.valueOf(Math.round(zone.getY1())));
+            ph.put("y2", String.valueOf(Math.round(zone.getY2())));
+            ph.put("z1", String.valueOf(Math.round(zone.getZ1())));
+            ph.put("z2", String.valueOf(Math.round(zone.getZ2())));
+            sender.sendMessage(getLangMessage("zone_list_item", ph));
         });
         return true;
     }
 
     private boolean handleStatus(CommandSender sender) {
         String status = plugin.isRadiationActive() 
-            ? ChatColor.GREEN + "✔ АКТИВИРОВАНА" 
-            : ChatColor.RED + "✖ ДЕАКТИВИРОВАНА";
+            ? getLangMessage("activated") 
+            : getLangMessage("disabled");
 
-        sender.sendMessage(ChatColor.GOLD + "─── " + ChatColor.BOLD + "Статус радиации" + ChatColor.RESET + ChatColor.GOLD + " ───");
-        sender.sendMessage(ChatColor.GRAY + "Состояние: " + status);
-        sender.sendMessage(ChatColor.GOLD + "\nУровни воздействия:");
-        sender.sendMessage(ChatColor.DARK_GREEN + "▸ " + String.format("%.1f", level2Threshold) + "+ " + ChatColor.GRAY + "- Замедление I");
-        sender.sendMessage(ChatColor.GOLD + "▸ " + String.format("%.1f", level3Threshold) + "+ " + ChatColor.GRAY + "- Замедление II");
-        sender.sendMessage(ChatColor.RED + "▸ " + String.format("%.1f", level4Threshold) + "+ " + ChatColor.GRAY + "- Урон + Замедление");
-        sender.sendMessage(ChatColor.DARK_RED + "▸ " + String.format("%.1f", level5Threshold) + "+ " + ChatColor.GRAY + "- Двойной урон + Замедление II");
+        sender.sendMessage(getLangMessage("radiation_status_header"));
+        sender.sendMessage(getLangMessage("status") + status);
+        sender.sendMessage(getLangMessage("levels"));
+        sender.sendMessage(ChatColor.DARK_GREEN + "▸ " + String.format("%.1f", level2Threshold) + "+ " + getLangMessage("effect_level_2"));
+        sender.sendMessage(ChatColor.GOLD + "▸ " + String.format("%.1f", level3Threshold) + "+ " + getLangMessage("effect_level_3"));
+        sender.sendMessage(ChatColor.RED + "▸ " + String.format("%.1f", level4Threshold) + "+ " + getLangMessage("effect_level_4"));
+        sender.sendMessage(ChatColor.DARK_RED + "▸ " + String.format("%.1f", level5Threshold) + "+ " + getLangMessage("effect_level_5"));
         return true;
     }
 }

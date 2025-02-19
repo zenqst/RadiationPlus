@@ -72,6 +72,9 @@ public class RadiationPlugin extends JavaPlugin {
         // Сохранить config.yml по умолчанию (если не существует)
         saveDefaultConfig();
         loadConfigValues();
+        
+        // Загрузка языка
+        loadLanguage();
 
         // Создать и загрузить zones.yml
         createZonesFile();
@@ -300,6 +303,34 @@ public class RadiationPlugin extends JavaPlugin {
     private String getServerVersion() {
         return Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
     }
+
+    private File langFile;
+    private FileConfiguration langConfig;
+
+    private void loadLanguage() {
+        // Получаем язык из config.yml (например, "en_US" или "ru_RU")
+        String lang = getConfig().getString("lang", "en_US");
+        // Формируем путь к языковому файлу в папке данных плагина
+        langFile = new File(getDataFolder(), "languages" + File.separator + lang + ".yml");
+        // Если файла нет, копируем его из ресурсов
+        if (!langFile.exists()) {
+            getDataFolder().mkdirs();
+            saveResource("languages/" + lang + ".yml", false);
+        }
+        langConfig = YamlConfiguration.loadConfiguration(langFile);
+    }
+
+    public String getLangMessage(String key) {
+        return ChatColor.translateAlternateColorCodes('&', langConfig.getString(key, key));
+    }
+
+    public String getLangMessage(String key, Map<String, String> placeholders) {
+        String msg = ChatColor.translateAlternateColorCodes('&', langConfig.getString(key, key));
+        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+            msg = msg.replace("%" + entry.getKey() + "%", entry.getValue());
+        }
+        return msg;
+    }
     
     // Загрузка значений из config.yml
     private void loadConfigValues() {
@@ -329,10 +360,8 @@ public class RadiationPlugin extends JavaPlugin {
     private void createRadiationSensor() {
         radiationSensor = new ItemStack(Material.COMPASS);
         ItemMeta meta = radiationSensor.getItemMeta();
-        meta.setDisplayName(ChatColor.GREEN + "Радиационный компас");
-        meta.setLore(Arrays.asList(
-            ChatColor.GRAY + "ПКМ - проверить уровень радиации"
-        ));
+        meta.setDisplayName(getLangMessage("compass_name"));
+        meta.setLore(Arrays.asList(getLangMessage("compass_desc")));
         
         // Добавляем эффект свечения: используем, например, INFINITY (любое скрытое зачарование)
         meta.addEnchant(Enchantment.INFINITY, 1, true);

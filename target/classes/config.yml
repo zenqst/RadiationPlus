@@ -1,23 +1,22 @@
-# Конфигурация плагина RadiationPlugin
+lang: en_US
 
-# Скорость накопления/спада радиации (за секунду)
+# Radiation accumulation/decay rate (per second)
 accumulationRate: 0.1
 decayRate: 0.2
 
-# Пороговые значения уровней радиации:
+# Threshold values of radiation levels:
 level2Threshold: 6.0
 level3Threshold: 9.0
 level4Threshold: 15.0
 level5Threshold: 25.0
 
-# Базовый урон, который наносится на уровне 4 (на уровне 5 урон удваивается)
+# Base damage dealt at level 4 (at level 5, damage is doubled)
 baseDamage: 1.0
 
-# Настройки датчика радиации
+# Radiation sensor (dosimeter) settings
 radiation-sensor:
   hide-recipe: true
-  glow-effect: true # Контроль свечения
-  prevent-placement: true # Блокировка установки
+  glow-effect: true
   recipe:
     shape:
       - "ORD"
