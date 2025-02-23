@@ -1,4 +1,4 @@
-# ☢️ RadiationPlus
+![RadiationPlus Banner](https://i.imgur.com/K9EEcX4.png)
 
 Introducing RadiationPlus! Experience a whole new level of immersion as you explore the radiation zones on your server.
 
