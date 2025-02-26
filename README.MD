@@ -2,10 +2,10 @@
 
 ---
 
-[![Modrinth](https://raw.githubusercontent.com/zenqst/RadiationPlus/dcf9afcee81945b508d02ea788a7f948865e0d10/icons/Modrinth.svg)](https://modrinth.com/plugin/radiationplus)
-[![Github](https://raw.githubusercontent.com/zenqst/RadiationPlus/dcf9afcee81945b508d02ea788a7f948865e0d10/icons/Github.svg)](https://github.com/zenqst/RadiationPluss)
-![Paper](https://raw.githubusercontent.com/zenqst/RadiationPlus/dcf9afcee81945b508d02ea788a7f948865e0d10/icons/Paper.svg)
-![Purpur](https://raw.githubusercontent.com/zenqst/RadiationPlus/dcf9afcee81945b508d02ea788a7f948865e0d10/icons/Purpur.svg)
+[![Modrinth](https://raw.githubusercontent.com/zenqst/RadiationPlus/0eb9506c0a6770c9233ad0e2dd0dc3cabc18974b/icons/Modrinth.svg)](https://modrinth.com/plugin/radiationplus)
+[![Github](https://raw.githubusercontent.com/zenqst/RadiationPlus/0eb9506c0a6770c9233ad0e2dd0dc3cabc18974b/icons/Github.svg)](https://github.com/zenqst/RadiationPluss)
+![Paper](https://raw.githubusercontent.com/zenqst/RadiationPlus/0eb9506c0a6770c9233ad0e2dd0dc3cabc18974b/icons/Paper.svg)
+![Purpur](https://raw.githubusercontent.com/zenqst/RadiationPlus/0eb9506c0a6770c9233ad0e2dd0dc3cabc18974b/icons/Paper.svg)
 
 Introducing RadiationPlus! Experience a whole new level of immersion as you explore the radiation zones on your server.
 
