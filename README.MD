@@ -5,7 +5,7 @@
 [![Modrinth](https://raw.githubusercontent.com/zenqst/RadiationPlus/0eb9506c0a6770c9233ad0e2dd0dc3cabc18974b/icons/Modrinth.svg)](https://modrinth.com/plugin/radiationplus)
 [![Github](https://raw.githubusercontent.com/zenqst/RadiationPlus/0eb9506c0a6770c9233ad0e2dd0dc3cabc18974b/icons/Github.svg)](https://github.com/zenqst/RadiationPluss)
 ![Paper](https://raw.githubusercontent.com/zenqst/RadiationPlus/0eb9506c0a6770c9233ad0e2dd0dc3cabc18974b/icons/Paper.svg)
-![Purpur](https://raw.githubusercontent.com/zenqst/RadiationPlus/0eb9506c0a6770c9233ad0e2dd0dc3cabc18974b/icons/Paper.svg)
+![Purpur](https://raw.githubusercontent.com/zenqst/RadiationPlus/6bf141651e90baed0a84f07a5781f0b3569a6699/icons/Purpur.svg)
 
 Introducing RadiationPlus! Experience a whole new level of immersion as you explore the radiation zones on your server.
 
