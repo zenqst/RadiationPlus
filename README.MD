@@ -1,4 +1,11 @@
-# ☢️ RadiationPlus
+![RadiationPlus Banner](https://i.imgur.com/K9EEcX4.png)
+
+---
+
+[![Modrinth](https://i.imgur.com/g20uYwk.png)](https://modrinth.com/plugin/radiationplus)
+[![Github](https://i.imgur.com/4SKHX3V.png)](https://github.com/zenqst/RadiationPluss)
+![Paper](https://i.imgur.com/T5loQVg.png)
+![Purpur](https://i.imgur.com/s6OTDku.png)
 
 Introducing RadiationPlus! Experience a whole new level of immersion as you explore the radiation zones on your server.
 
